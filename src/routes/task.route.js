@@ -15,4 +15,5 @@ const upload = multer({
 router.post('/', upload.single('image'), taskController.createTask)
 router.route('/:id')
     .get(taskController.getTaskDetail) 
+router.post('/resized-images', upload.array('images', 2), taskController.generatedImages)
 module.exports = router;
