@@ -23,8 +23,20 @@ const getTaskDetail = async(req, res, next) => {
     }
     next();
 }
+const generatedImages = async(req, res, next) => {
+    try {
+        await domain.generatedImages(req.body.taskId, req.files);
+        res.status(201).send();
+    }
+    catch(ex) {
+        console.error('Error generating resized images', { ex });
+        res.status(500).json({ error: ex.message })
+    }
+    next();
+}
 
 module.exports = {
     createTask,
-    getTaskDetail
+    getTaskDetail,
+    generatedImages
 }
