@@ -12,13 +12,25 @@ You should install npm's dependencies
 ```bash 
 npm i
 ```
+Now, you have to set environment variable **MONGODB_URL** with the database connection info.
+
+```
+// .env file
+MONGODB_URL=mongodb://{user}:{password}@{databaseHost}:{databasePort}/image-resizr?authSource=admin
+```
+
 Then you can run the project
 ```bash
 npm start
 ```
 
 ## Local development
-You can launch the project to develop using **nodemon**. 
+You can launch the project to develop using **nodemon** and use **docker compose** to instantiate a moongose database container in your system. Remember set the **MONGODB_URL** environment variable to your machine.
+
+Run the moongose database:
+```bash
+docker-compose up
+```
 
 Launch the project with hot reload for development using the command below:
 ```bash
