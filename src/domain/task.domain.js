@@ -21,6 +21,15 @@ const createTask = async (file) => {
     return _dispatchResizeImage(task.id, imagePath);
 }
 
+const getTaskStatus = async (id) => {
+    try {
+        const { status } = await Task.findById(id);
+        return status;        
+    } catch (error) {
+        throw new Error('Error getting task status', { error: error.message })
+    }
+}
+
 const _dispatchResizeImage = (taskId, imagePath) => {
     form.append('file', fs.createReadStream(imagePath))
     form.append('taskId', taskId);
@@ -34,5 +43,6 @@ const _dispatchResizeImage = (taskId, imagePath) => {
 }
 
 module.exports = {
-    createTask
+    createTask,
+    getTaskStatus
 }
