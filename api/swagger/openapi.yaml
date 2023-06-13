@@ -1,0 +1,128 @@
+openapi: "3.0.3"
+info:
+  title: image-resizer-svc
+  version: 0.1.0
+  description: >+
+    Allows the creation of tasks for resize images. This service will generate two copies of the original image keeping the ratio with the following widths: 1024px and 800px
+servers:
+  - url: http://localhost:{port}/
+    variables:
+      port:
+        default: "3002"
+tags:
+  - name: Task management
+paths:
+  /task:
+    post:
+      tags: 
+        - Task management
+      summary: Create task request
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Image to upload and resize
+      responses:
+        201:
+          description: Task was created successfully
+        500:
+          description: Error creating task request
+          content:
+            application/json:
+              schema:
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Error creating task in database
+  /task/{id}:
+    get:
+      tags: 
+        - Task management
+      summary: Get task status
+      parameters:
+        - name: id
+          in: path
+          description: Task identifier
+          required: true
+          schema:
+            type: string
+          example: 64875c05f290ce514a2d41eb
+      responses:
+        200:
+          description: Get status successfully
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [SUCCESS, PROCCESSING, ERROR]
+              example:
+                status: PROCCESSING
+        500:
+          description: Error getting status
+          content:
+            application/json:
+              schema:
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Error getting task status 
+  /resized-images:
+    post:
+      tags: 
+        - Task management
+      summary: Upload the resized images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - taskId
+                - images
+              properties:
+                taskId:
+                  type: string
+                  description: Related task identifier
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Array of resized images
+            encoding:
+              image: 
+                contentType: image/png, image/jpeg 
+      responses:
+        201:
+          description: Images were uploaded successfully
+        500:
+          description: Error uploading resized images
+          content:
+            application/json:
+              schema:
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Error generating resized images
