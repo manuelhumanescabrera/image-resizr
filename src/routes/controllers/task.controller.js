@@ -11,7 +11,20 @@ const createTask = async(req, res, next) => {
     }
     next();
 }
+const getTaskDetail = async(req, res, next) => {
+    try {
+        const status = await domain.getTaskStatus(req.params.id);
+        if(status === null ) res.status(404).send();
+        res.status(200).json({ status })
+    }
+    catch(ex) {
+        console.error('Error getting task detail', { ex });
+        res.status(500).json({ error: ex.message })
+    }
+    next();
+}
 
 module.exports = {
-    createTask
+    createTask,
+    getTaskDetail
 }
