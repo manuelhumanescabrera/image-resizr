@@ -30,6 +30,24 @@ const getTaskStatus = async (id) => {
     }
 }
 
+const generatedImages = async(taskId, files) => {
+    for(let file of files) {
+        try {
+            const originalFileName = file.originalname.replace(/-800.*|-1024.*/, '')
+            await imageService.createImage(taskId, file.path, originalFileName)
+        } 
+        catch(imageError) {
+            await Task.findByIdAndUpdate(taskId, { status: TaskStatus.ERROR}).catch((error) => {
+                throw new Error('Error updating task status to error', { error: error.message })
+            });
+            throw new Error('Error creating image in database', { error: imageError.message });
+        };
+    }
+    return Task.findByIdAndUpdate(taskId, { status: TaskStatus.SUCCESS}).catch((error) => {
+        throw new Error('Error updating task status to success', { error: error.message })
+    });
+}
+
 const _dispatchResizeImage = (taskId, imagePath) => {
     form.append('file', fs.createReadStream(imagePath))
     form.append('taskId', taskId);
@@ -44,5 +62,6 @@ const _dispatchResizeImage = (taskId, imagePath) => {
 
 module.exports = {
     createTask,
-    getTaskStatus
+    getTaskStatus,
+    generatedImages
 }
